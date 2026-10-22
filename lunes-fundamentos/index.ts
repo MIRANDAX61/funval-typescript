@@ -16,7 +16,53 @@ console.log("¡Bienvenido, " + userName + "!");
 console.log((2 * 2) + 1);
 console.log("==========================================");
 
-let titulos_tareas : string[] = [];
+let titulos_tareas: Task[] = [];
+let siguienteId: number = 1;
+
+const addTask = (title: string) => {
+   const nuevatarea: Task = { 
+        id: siguienteId,
+        title: title,
+        completed: false
+   };
+   titulos_tareas.push(nuevatarea)
+   siguienteId++;
+
+   console.log("Tarea agregada: "+ nuevatarea.title)
+}
+
+const listTasks = () => {
+    if (titulos_tareas.length=== 0){
+    
+    console.log("No hay tareas registradas.");
+    return;
+    }
+        for (let j = 0; j < titulos_tareas.length; j++) {
+            const tarea = titulos_tareas[j];
+
+            let estado: string = "pendiente"; 
+
+            if (tarea.completed) {
+                estado = "completada";
+            }
+
+            console.log("[" + tarea.id +"]" + tarea.title + " - " + estado);
+            
+        }
+}
+
+const removeTask = () => {
+
+     const eliminada  = titulos_tareas.pop();
+
+     if (eliminada === undefined) {
+        console.log("No hay tareas para eliminar.");
+     }else {
+        console.log ("Tarea eliminda: " + eliminada.title); 
+     }
+}
+
+
 async function main(){
         let entrada : string =""; 
         while (entrada !== "4") {
@@ -31,31 +77,17 @@ async function main(){
                 case "1": {
                     const titulo = await rl.question("Título de la tarea: ");
 
-                    titulos_tareas.push(titulo);
-
-                    console.log("Tarea agregada: " + titulo);
+                    addTask(titulo);
                     break;
                 }
 
                 case "2": {
-                    if (titulos_tareas.length === 0) {
-                        console.log("No hay tareas para eliminar.");
-                    } else {
-                        let eliminada : string = titulos_tareas.pop()!;
-                        console.log("Tarea eliminada: " + eliminada);
-                        console.log(titulos_tareas);
-                    }
+                    removeTask();
                     break;
                 }
 
                 case "3": {
-                    if (titulos_tareas.length === 0) {
-                        console.log("No hay tareas registradas.");
-                    } else {
-                        for (let i = 0; i < titulos_tareas.length; i++) {
-                            console.log( (i+1) + ". " + titulos_tareas[i]);
-                        }
-                    }
+                    listTasks();
                     break;
                 }
 
@@ -74,6 +106,17 @@ async function main(){
 main().finally(()=> {
 // 🚫 No eliminar las líneas de abajo ⬇️
 rl.close();});
+
+interface Task {
+    id : number;
+    title : string;
+    completed : boolean;
+}
+
+
+
+
+
 
 
 
