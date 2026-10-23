@@ -37,18 +37,18 @@ const listTasks = () => {
     console.log("No hay tareas registradas.");
     return;
     }
-        for (let j = 0; j < titulos_tareas.length; j++) {
-            const tarea = titulos_tareas[j];
+    let convertir = titulos_tareas.map(
+        (task : Task) => {
+        const {id, title, completed} = task;
+        const estado = completed ? "completada" : "pendiente";
 
-            let estado: string = "pendiente"; 
+        return "[" + id + "] " + title + " - " + estado; 
+    });
 
-            if (tarea.completed) {
-                estado = "completada";
-            }
+    convertir.forEach((texto: string) => {
+        console.log(texto);
+    });
 
-            console.log("[" + tarea.id +"]" + tarea.title + " - " + estado);
-            
-        }
 }
 
 const removeTask = () => {
@@ -65,13 +65,15 @@ const removeTask = () => {
 
 async function main(){
         let entrada : string =""; 
-        while (entrada !== "4") {
+        while (entrada !== "7") {
             console.log("==== MENÚ DE TAREAS ====");
             console.log("1. Agregar tarea");
             console.log("2. Eliminar últuima tarea");
             console.log("3. Listar tareas");
-            console.log("4. Salir"); 
-
+            console.log("4. Marcar tarea como completada"); 
+            console.log("5. Ver las tareas pendientes");
+            console.log("6. Ver las tareas completadas");
+            console.log("7. Salir");
             entrada = await rl.question("Elige una opción: "); 
             switch (entrada) {
                 case "1": {
@@ -92,6 +94,22 @@ async function main(){
                 }
 
                 case "4": {
+                    const id : number = Number(await rl.question("Id de la tarea: "));
+                    markCompleted(id);
+                    break;
+                }
+
+                case "5" : { 
+                    filterPending();
+                    break;
+                }
+
+                case "6" : { 
+                    filterCompleted();
+                    break;
+                }
+
+                case "7" : { 
                     console.log("¡Hasta luego!");
                     break;
                 }
@@ -114,8 +132,47 @@ interface Task {
 }
 
 
+//Nuevas funciones de filtrado y modificación
+// const markCompleted = (id: number) => { ... } — usa .find() para localizar
+//la tarea por su id y cambia su propiedad completed a true
+const markCompleted = (id: number) => {
+    let localiza= titulos_tareas.find(
+        (ids : Task) => id === ids.id 
+    )
+    if (localiza){
+        localiza.completed = true;
+        console.log("tarea completada " + localiza.title);
+    } else {
+        console.log("No se pudo localizar esa tarea");
+    }
+}
 
+const filterPending = () => {
+    let sincompletar = titulos_tareas.filter(
+        (completado: Task) => completado.completed === false 
+    );
+    if (sincompletar.length > 0){
+        sincompletar.forEach((tarea: Task) => {
+            console.log("Tarea sin completar: " +  tarea.title);
+        });
+    } else {
+        console.log("No hay tareas sin completar");
+    }
+}
 
+const filterCompleted = () => { 
+      let completada = titulos_tareas.filter(
+        (completado: Task) => completado.completed === true 
+    );
+    if (completada.length > 0){
+        completada.forEach((tarea: Task)=> {
+            console.log("Tarea completa: " + tarea.title);
+        });
+
+    } else {
+        console.log("No hay tareas completas");
+    }  
+}
 
 
 
