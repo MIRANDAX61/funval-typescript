@@ -19,17 +19,42 @@ console.log("==========================================");
 let titulos_tareas: Task[] = [];
 let siguienteId: number = 1;
 
-const addTask = (title: string) => {
-   const nuevatarea: Task = { 
-        id: siguienteId,
-        title: title,
-        completed: false
-   };
-   titulos_tareas.push(nuevatarea)
-   siguienteId++;
+const saveToDB = (tarea: Task): Promise<void> => {
+    return new Promise<void>((resolve) => {
+        setTimeout(() => {
+            console.log("Tarea guardada: " + tarea.title);
+            resolve();
+        }, 2000);
+    });
+};
 
-   console.log("Tarea agregada: "+ nuevatarea.title)
-}
+
+const addTask = async (title: string): Promise<void> => {
+    try {
+        if (title.trim() === "") {
+            throw new Error("El titulo no puede estar vacío");
+        }
+
+        const nuevatarea: Task = {
+            id: siguienteId,
+            title: title.trim(),
+            completed: false
+        };
+
+        console.log("Guardando tarea.....");
+
+        await saveToDB(nuevatarea);
+
+        titulos_tareas.push(nuevatarea);
+        siguienteId++;
+
+        console.log("Tarea agregada: " + nuevatarea.title);
+    } catch (error) {
+        if (error instanceof Error) {
+            console.log(error.message);
+        }
+    }
+};
 
 const listTasks = () => {
     if (titulos_tareas.length=== 0){
@@ -79,7 +104,7 @@ async function main(){
                 case "1": {
                     const titulo = await rl.question("Título de la tarea: ");
 
-                    addTask(titulo);
+                    await addTask(titulo);
                     break;
                 }
 
@@ -114,7 +139,7 @@ async function main(){
                     break;
                 }
                 default: {
-                console.log("Opción inválida. Elige del 1 al 4.");
+                console.log("Opción inválida. Elige del 1 al 7.");
                 }    
 
         }
@@ -173,6 +198,7 @@ const filterCompleted = () => {
         console.log("No hay tareas completas");
     }  
 }
+
 
 
 
